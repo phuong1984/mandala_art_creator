@@ -471,11 +471,13 @@ const Shapes = (function () {
     function cloneShapeSync(source) {
         if (!source) return null;
         const obj = source.toObject();
-        delete obj.symmetryGroup;
-        delete obj.symmetryIndex;
-        delete obj.symmetryBaseShape;
-        delete obj.savedSymmetryCount;
-        delete obj.savedSymmetryAngle;
+        // Preserve custom properties that are not included in toObject by default
+        if (source.layerId) obj.layerId = source.layerId;
+        if (source.symmetryGroup !== undefined) obj.symmetryGroup = source.symmetryGroup;
+        if (source.symmetryIndex !== undefined) obj.symmetryIndex = source.symmetryIndex;
+        if (source.symmetryBaseShape !== undefined) obj.symmetryBaseShape = source.symmetryBaseShape;
+        if (source.savedSymmetryCount !== undefined) obj.savedSymmetryCount = source.savedSymmetryCount;
+        if (source.savedSymmetryAngle !== undefined) obj.savedSymmetryAngle = source.savedSymmetryAngle;
         
         let clone;
         if (source.type === 'rect') clone = new fabric.Rect(obj);

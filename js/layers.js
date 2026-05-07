@@ -168,7 +168,7 @@ const Layers = (function() {
         
         [...layers].reverse().forEach((layer, reverseIndex) => {
             const actualIndex = layers.length - 1 - reverseIndex;
-            const layerItem = createLayerElement(layer, actualIndex);
+            const layerItem = createLayerElement(layer, actualIndex, reverseIndex);
             layerList.appendChild(layerItem);
         });
     }
@@ -176,26 +176,33 @@ const Layers = (function() {
     /**
      * Tạo phần tử HTML đại diện cho một lớp trong danh sách UI.
      * @param {Object} layer - Đối tượng lớp.
-     * @param {number} index - Vị trí của lớp trong mảng.
+     * @param {number} actualIndex - Vị trí thực trong mảng layers.
+     * @param {number} reverseIndex - Vị trí trong UI (từ trên xuống).
      * @returns {HTMLElement}
      */
-    function createLayerElement(layer, index) {
+    function createLayerElement(layer, actualIndex, reverseIndex) {
         const div = document.createElement('div');
-        div.className = 'layer-item' + (index === activeLayerIndex ? ' active' : '');
-        div.dataset.index = index;
+        div.className = 'layer-item' + (actualIndex === activeLayerIndex ? ' active' : '');
+        div.dataset.index = actualIndex;
+        
+        // Thêm grip handle cho drag and drop
+        const grip = document.createElement('span');
+        grip.className = 'layer-grip';
+        grip.textContent = '☰';
+        grip.title = 'Kéo để thay đổi thứ tự';
         
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = layer.visible;
         checkbox.dataset.action = 'visibility';
-        checkbox.addEventListener('change', (e) => toggleLayerVisibility(index, e.target.checked));
+        checkbox.addEventListener('change', (e) => toggleLayerVisibility(actualIndex, e.target.checked));
         
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
         nameInput.className = 'layer-name';
         nameInput.value = layer.name;
         nameInput.dataset.action = 'rename';
-        nameInput.addEventListener('change', (e) => renameLayer(index, e.target.value));
+        nameInput.addEventListener('change', (e) => renameLayer(actualIndex, e.target.value));
         
         const opacitySlider = document.createElement('input');
         opacitySlider.type = 'range';
@@ -203,9 +210,9 @@ const Layers = (function() {
         opacitySlider.min = '0';
         opacitySlider.max = '100';
         opacitySlider.value = layer.opacity;
-        opacitySlider.addEventListener('input', (e) => setLayerOpacity(index, parseInt(e.target.value), false));
+        opacitySlider.addEventListener('input', (e) => setLayerOpacity(actualIndex, parseInt(e.target.value), false));
         opacitySlider.addEventListener('change', (e) => {
-            setLayerOpacity(index, parseInt(e.target.value), true);
+            setLayerOpacity(actualIndex, parseInt(e.target.value), true);
         });
         
         const actionsDiv = document.createElement('div');
@@ -216,30 +223,135 @@ const Layers = (function() {
         lockBtn.dataset.action = 'lock';
         lockBtn.title = layer.locked ? 'Unlock' : 'Lock';
         lockBtn.textContent = layer.locked ? '🔒' : '📷';
-        lockBtn.addEventListener('click', () => toggleLayerLock(index));
+        lockBtn.addEventListener('click', () => toggleLayerLock(actualIndex));
         
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'icon-button';
         deleteBtn.dataset.action = 'delete';
         deleteBtn.title = 'Delete';
         deleteBtn.textContent = '🗑️';
-        deleteBtn.addEventListener('click', () => deleteLayer(index));
+        deleteBtn.addEventListener('click', () => deleteLayer(actualIndex));
         
         actionsDiv.appendChild(lockBtn);
         actionsDiv.appendChild(deleteBtn);
         
+        div.appendChild(grip);
         div.appendChild(checkbox);
         div.appendChild(nameInput);
         div.appendChild(opacitySlider);
         div.appendChild(actionsDiv);
         
         div.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
-                setActiveLayer(index);
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.target !== grip) {
+                setActiveLayer(actualIndex);
             }
         });
         
+        // Thêm drag and drop events
+        setupLayerDragAndDrop(div, actualIndex, reverseIndex);
+        
         return div;
+    }
+    
+    /**
+     * Thiết lập các sự kiện kéo thả cho layer element.
+     * @param {HTMLElement} element - Phần tử layer.
+     * @param {number} actualIndex - Vị trí thực trong mảng layers.
+     * @param {number} reverseIndex - Vị trí trong UI (từ trên xuống).
+     */
+    function setupLayerDragAndDrop(element, actualIndex, reverseIndex) {
+        const grip = element.querySelector('.layer-grip');
+        
+        element.addEventListener('dragstart', (e) => {
+            element.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', reverseIndex.toString());
+        });
+        
+        element.addEventListener('dragend', () => {
+            element.classList.remove('dragging');
+            element.draggable = false;
+            clearDropIndicators();
+        });
+        
+        element.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const layerList = document.getElementById('layer-list');
+            if (!layerList) return;
+            
+            const items = Array.from(layerList.querySelectorAll('.layer-item:not(.dragging)'));
+            
+            clearDropIndicators();
+            
+            // Tìm vị trí insert dựa trên vị trí chuột
+            let insertBeforeIndex = items.length;
+            for (let i = 0; i < items.length; i++) {
+                const rect = items[i].getBoundingClientRect();
+                if (e.clientY < rect.top + rect.height / 2) {
+                    insertBeforeIndex = i;
+                    items[i].classList.add('drop-indicator');
+                    break;
+                }
+            }
+            
+            // Nếu không tìm thấy, highlight bottom
+            if (insertBeforeIndex === items.length && items.length > 0) {
+                items[items.length - 1].classList.add('drop-indicator');
+            }
+        });
+        
+        element.addEventListener('dragleave', () => {
+            // Không cần làm gì, dragover sẽ xử lý
+        });
+        
+        element.addEventListener('drop', (e) => {
+            e.preventDefault();
+            
+            const draggedReverseIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            const layerList = document.getElementById('layer-list');
+            const items = Array.from(layerList.querySelectorAll('.layer-item:not(.dragging)'));
+            
+            // Tìm vị trí insert
+            let insertBeforeIndex = items.length;
+            for (let i = 0; i < items.length; i++) {
+                const rect = items[i].getBoundingClientRect();
+                if (e.clientY < rect.top + rect.height / 2) {
+                    insertBeforeIndex = i;
+                    break;
+                }
+            }
+            
+            const toReverseIndex = insertBeforeIndex;
+            const fromReverseIndex = draggedReverseIndex;
+            
+            if (fromReverseIndex === toReverseIndex) {
+                clearDropIndicators();
+                return;
+            }
+            
+            // Chuyển đổi sang index trong mảng layers
+            const fromIndex = layers.length - 1 - fromReverseIndex;
+            const toIndex = layers.length - 1 - toReverseIndex;
+            
+            moveLayer(fromIndex, toIndex);
+            clearDropIndicators();
+        });
+        
+        // Chỉ cho phép kéo khi nhấn vào grip handle
+        grip.addEventListener('mousedown', () => {
+            element.draggable = true;
+        });
+    }
+    
+    /**
+     * Xóa các indicator highlight khỏi tất cả layer items.
+     */
+    function clearDropIndicators() {
+        document.querySelectorAll('.layer-item.drop-indicator').forEach(el => {
+            el.classList.remove('drop-indicator');
+        });
     }
     
     /**
@@ -339,6 +451,38 @@ const Layers = (function() {
         if (layers[index]) {
             layers[index].name = name;
         }
+    }
+    
+    /**
+     * Di chuyển một lớp từ vị trí này sang vị trí khác.
+     * @param {number} fromIndex - Vị trí hiện tại của lớp.
+     * @param {number} toIndex - Vị trí mới muốn đến.
+     */
+    function moveLayer(fromIndex, toIndex) {
+        // 1. Kiểm tra giới hạn chỉ số
+        if (fromIndex < 0 || fromIndex >= layers.length || 
+            toIndex < 0 || toIndex >= layers.length) return;
+        
+        // 2. Không làm gì nếu cùng vị trí
+        if (fromIndex === toIndex) return;
+        
+        // 3. Cắt và chèn lớp tới vị trí mới
+        const layer = layers.splice(fromIndex, 1)[0];
+        layers.splice(toIndex, 0, layer);
+        
+        // 4. Cập nhật activeLayerIndex nếu lớp đang hoạt động bị di chuyển
+        if (activeLayerIndex === fromIndex) {
+            activeLayerIndex = toIndex;
+        } else if (activeLayerIndex > fromIndex && activeLayerIndex <= toIndex) {
+            activeLayerIndex--;
+        } else if (activeLayerIndex < fromIndex && activeLayerIndex >= toIndex) {
+            activeLayerIndex++;
+        }
+        
+        // 5. Cập nhật UI và canvas
+        renderLayerList();
+        syncAllLayers();
+        if (typeof History !== 'undefined') History.add('reorder layers');
     }
     
     /**

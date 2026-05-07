@@ -224,6 +224,14 @@ body {
     font-size: 12px;
 }
 
+.layer-item.dragging {
+    opacity: 0.5;
+}
+
+.layer-item.drop-indicator {
+    border-top: 2px solid var(--accent-primary);
+}
+
 
 
 /* Canvas Wrapper */
