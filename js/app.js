@@ -392,10 +392,19 @@ function resetToDefault() {
     Canvas.setSnapEnabled(false);
 
     const symmetryToggle = document.getElementById('symmetry-toggle');
-    if (symmetryToggle) symmetryToggle.checked = false;
+    if (symmetryToggle) {
+        symmetryToggle.checked = true;
+        SymmetryMode.setEnabled(true);
+    }
 
     const symmetryCount = document.getElementById('symmetry-count');
-    if (symmetryCount) symmetryCount.value = 8;
+    if (symmetryCount) {
+        symmetryCount.value = 8;
+        SymmetryMode.setSymmetry(8);
+    }
+    
+    // Update symmetry UI to reflect the new state
+    SymmetryMode.updateUI();
 
     Layers.clearLayers();
     History.clear();
