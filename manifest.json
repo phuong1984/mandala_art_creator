@@ -1,0 +1,21 @@
+{
+    "name": "Mandala Art Creator",
+    "short_name": "Mandala Art",
+    "description": "A relaxing web-based mandala creation application for drawing and coloring",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0d6efd",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230d6efd'/><circle cx='50' cy='50' r='30' fill='none' stroke='white' stroke-width='3'/><circle cx='50' cy='50' r='15' fill='none' stroke='white' stroke-width='3'/></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["entertainment", "creative", "lifestyle"],
+    "lang": "en",
+    "dir": "ltr"
+}

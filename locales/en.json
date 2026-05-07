@@ -1,0 +1,123 @@
+{
+    "app": {
+        "title": "Mandala Art Creator",
+        "freeMode": "Free Draw",
+        "templateMode": "Templates"
+    },
+    "tools": {
+        "brush": "Brush",
+        "eraser": "Eraser",
+        "fill": "Fill Bucket",
+        "shapes": "Shapes",
+        "line": "Line",
+        "curve": "Curve",
+        "circle": "Circle",
+        "ellipse": "Ellipse",
+        "rectangle": "Rectangle",
+        "square": "Square",
+        "diamond": "Diamond",
+        "parallelogram": "Parallelogram",
+        "arc": "Arc",
+        "triangle": "Triangle",
+        "size": "Size",
+        "opacity": "Opacity"
+    },
+    "layers": {
+        "title": "Layers",
+        "add": "Add Layer",
+        "delete": "Delete Layer",
+        "lock": "Lock Layer",
+        "unlock": "Unlock Layer",
+        "visibility": "Toggle Visibility",
+        "opacity": "Layer Opacity",
+        "rename": "Rename Layer",
+        "duplicate": "Duplicate Layer",
+        "merge": "Merge Down",
+        "empty": "No layers"
+    },
+    "palette": {
+        "title": "Color Palette",
+        "rainbow": "Rainbow",
+        "pastel": "Pastel",
+        "earth": "Earth",
+        "ocean": "Ocean",
+        "sunset": "Sunset",
+        "forest": "Forest",
+        "neon": "Neon",
+        "grayscale": "Grayscale",
+        "recent": "Recent Colors",
+        "custom": "Custom Palette"
+    },
+    "actions": {
+        "undo": "Undo",
+        "redo": "Redo",
+        "delete": "Delete",
+        "save": "Save",
+        "export": "Export",
+        "exportPNG": "Export as PNG",
+        "exportPrint": "Export for Print",
+        "exportJSON": "Export Project",
+        "share": "Share",
+        "import": "Import",
+        "importProject": "Import Project",
+        "clear": "Clear Canvas",
+        "clearAll": "Clear All",
+        "close": "Close",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "ok": "OK"
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "theme": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "autoSave": "Auto-save",
+        "gridSnap": "Snap to Grid"
+    },
+    "canvas": {
+        "zoom": "Zoom",
+        "zoomIn": "Zoom In",
+        "zoomOut": "Zoom Out",
+        "resetZoom": "Reset Zoom",
+        "pan": "Pan",
+        "background": "BG"
+    },
+    "projects": {
+        "title": "Projects",
+        "new": "New Project",
+        "open": "Open Project",
+        "recent": "Recent Projects",
+        "untitled": "Untitled",
+        "created": "Created",
+        "modified": "Last Modified",
+        "noProjects": "No saved projects",
+        "deleteConfirm": "Are you sure you want to delete this project?"
+    },
+    "messages": {
+        "autoSaved": "Auto-saved",
+        "saved": "Project saved",
+        "exported": "Exported successfully",
+        "copied": "Copied to clipboard",
+        "imported": "Project imported",
+        "cleared": "Canvas cleared",
+        "deleted": "Deleted",
+        "error": "An error occurred",
+        "loading": "Loading...",
+        "saving": "Saving...",
+        "unsavedChanges": "You have unsaved changes"
+    },
+    "help": {
+        "title": "Help",
+        "shortcuts": "Keyboard Shortcuts",
+        "brushShort": "Free draw mode",
+        "shapesShort": "Shape tool",
+        "fillShort": "Fill tool",
+        "undoShort": "Undo (Ctrl+Z)",
+        "redoShort": "Redo (Ctrl+Y)",
+        "deleteShort": "Delete selected (Del)",
+        "zoomShort": "Zoom (Ctrl+/-)",
+        "resetZoomShort": "Reset zoom (Ctrl+0)"
+    }
+}
