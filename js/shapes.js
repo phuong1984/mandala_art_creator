@@ -147,7 +147,7 @@ const Shapes = (function () {
         wasCanvasSelection = canvas.selection;
         canvas.selection = false;
         // 3. Lấy tọa độ điểm bắt đầu nhấn chuột
-        startPoint = canvas.getPointer(options.e);
+        startPoint = Canvas.snapToGrid(canvas.getPointer(options.e));
 
         // 4. Lưu tâm canvas và số lượng đối xứng cố định cho toàn bộ quá trình vẽ
         fixedCenter = Canvas.getCenter();
@@ -188,7 +188,7 @@ const Shapes = (function () {
         if (!isDrawing || !activeShape) return;
 
         // 1. Lấy tọa độ chuột hiện tại
-        const currentPoint = canvas.getPointer(options.e);
+        const currentPoint = Canvas.snapToGrid(canvas.getPointer(options.e));
         // 2. Cập nhật kích thước hình đang vẽ dựa trên điểm bắt đầu và điểm hiện tại
         switch (currentShape) {
             case 'line':
@@ -250,6 +250,11 @@ const Shapes = (function () {
         if (activeShape) {
             if (!noPreviewShapes.includes(currentShape)) {
                 updateShape(activeShape, startPoint, endPoint);
+            }
+
+            // Snap shape if enabled
+            if (Canvas.getSnapEnabled() && Canvas.getGridSize() > 0) {
+                snapShape(activeShape);
             }
 
             // 3. Xóa bỏ các hình ảo dùng để xem trước
@@ -691,6 +696,70 @@ const Shapes = (function () {
             transparentCorners: false,
             cornerSize: 10
         });
+    }
+
+    /**
+     * Snap shape properties to grid.
+     * @param {fabric.Object} shape
+     */
+    function snapShape(shape) {
+        const gridSize = Canvas.getGridSize();
+        if (gridSize <= 0) return;
+
+        switch (shape.type) {
+            case 'rect':
+                shape.left = Math.round(shape.left / gridSize) * gridSize;
+                shape.top = Math.round(shape.top / gridSize) * gridSize;
+                shape.width = Math.round(shape.width / gridSize) * gridSize;
+                shape.height = Math.round(shape.height / gridSize) * gridSize;
+                break;
+            case 'circle':
+                shape.left = Math.round(shape.left / gridSize) * gridSize;
+                shape.top = Math.round(shape.top / gridSize) * gridSize;
+                shape.radius = Math.round(shape.radius / gridSize) * gridSize;
+                break;
+            case 'ellipse':
+                shape.left = Math.round(shape.left / gridSize) * gridSize;
+                shape.top = Math.round(shape.top / gridSize) * gridSize;
+                shape.rx = Math.round(shape.rx / gridSize) * gridSize;
+                shape.ry = Math.round(shape.ry / gridSize) * gridSize;
+                break;
+            case 'line':
+                shape.x1 = Math.round(shape.x1 / gridSize) * gridSize;
+                shape.y1 = Math.round(shape.y1 / gridSize) * gridSize;
+                shape.x2 = Math.round(shape.x2 / gridSize) * gridSize;
+                shape.y2 = Math.round(shape.y2 / gridSize) * gridSize;
+                break;
+            case 'triangle':
+            case 'polygon':
+                if (shape.points) {
+                    shape.points = shape.points.map(p => ({
+                        x: Math.round(p.x / gridSize) * gridSize,
+                        y: Math.round(p.y / gridSize) * gridSize
+                    }));
+                    shape._calcDimensions();
+                }
+                shape.left = Math.round(shape.left / gridSize) * gridSize;
+                shape.top = Math.round(shape.top / gridSize) * gridSize;
+                break;
+            case 'path':
+                // For paths like arc, snap path commands
+                if (shape.path) {
+                    shape.path = shape.path.map(cmd => {
+                        if (cmd[0] === 'M' || cmd[0] === 'L' || cmd[0] === 'Q' || cmd[0] === 'C' || cmd[0] === 'A') {
+                            for (let i = 1; i < cmd.length; i += 2) {
+                                cmd[i] = Math.round(cmd[i] / gridSize) * gridSize;
+                                cmd[i + 1] = Math.round(cmd[i + 1] / gridSize) * gridSize;
+                            }
+                        }
+                        return cmd;
+                    });
+                }
+                shape.left = Math.round(shape.left / gridSize) * gridSize;
+                shape.top = Math.round(shape.top / gridSize) * gridSize;
+                break;
+        }
+        shape.setCoords();
     }
 
     return {

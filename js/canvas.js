@@ -15,6 +15,8 @@ const Canvas = (function() {
     let isPanning = false;
     /** @type {Object} Điểm di chuyển cuối cùng {x, y} */
     let lastPanPoint = { x: 0, y: 0 };
+    /** @type {boolean} Cờ đánh dấu có bật snap to grid hay không */
+    let snapEnabled = false;
     
     /**
      * Khởi tạo đối tượng Canvas và thiết lập các sự kiện mặc định.
@@ -264,6 +266,35 @@ const Canvas = (function() {
     }
     
     /**
+     * Thiết lập trạng thái snap to grid.
+     * @param {boolean} enabled - Bật hoặc tắt snap.
+     */
+    function setSnapEnabled(enabled) {
+        snapEnabled = enabled;
+    }
+    
+    /**
+     * Lấy trạng thái snap to grid hiện tại.
+     * @returns {boolean}
+     */
+    function getSnapEnabled() {
+        return snapEnabled;
+    }
+    
+    /**
+     * Snap một điểm đến lưới gần nhất.
+     * @param {Object} point - Điểm {x, y}.
+     * @returns {Object} Điểm đã snap.
+     */
+    function snapToGrid(point) {
+        if (!snapEnabled || gridSize <= 0) return point;
+        return {
+            x: Math.round(point.x / gridSize) * gridSize,
+            y: Math.round(point.y / gridSize) * gridSize
+        };
+    }
+    
+    /**
      * Thiết lập chế độ vẽ cho canvas.
      * @param {string} newMode - Chế độ mới ('free' để vẽ tự do, các chế độ khác cho hình khối).
      */
@@ -459,6 +490,47 @@ const Canvas = (function() {
         }, fabric.util.invertTransform(vpt));
     }
     
+    /**
+     * Lấy tỷ lệ zoom hiện tại.
+     * @returns {number}
+     */
+    function getZoom() {
+        return canvas ? canvas.getZoom() : 1;
+    }
+    
+    /**
+     * Thiết lập tỷ lệ zoom.
+     * @param {number} zoom
+     */
+    function setZoom(zoom) {
+        if (canvas) {
+            canvas.setZoom(zoom);
+            updateZoomDisplay();
+        }
+    }
+    
+    /**
+     * Lấy vị trí pan hiện tại.
+     * @returns {Object} {x, y}
+     */
+    function getPan() {
+        if (!canvas) return { x: 0, y: 0 };
+        const vpt = canvas.viewportTransform;
+        return { x: vpt[4], y: vpt[5] };
+    }
+    
+    /**
+     * Thiết lập vị trí pan.
+     * @param {Object} pan {x, y}
+     */
+    function setPan(pan) {
+        if (canvas) {
+            canvas.viewportTransform[4] = pan.x;
+            canvas.viewportTransform[5] = pan.y;
+            canvas.requestRenderAll();
+        }
+    }
+    
     return {
         init,
         handleResize,
@@ -468,6 +540,10 @@ const Canvas = (function() {
         zoomIn,
         zoomOut,
         resetZoom,
+        getZoom,
+        setZoom,
+        getPan,
+        setPan,
         getCanvas,
         clear,
         toJSON,
@@ -479,7 +555,10 @@ const Canvas = (function() {
         getCenter,
         updateZoomDisplay,
         setGridSize,
-        getGridSize
+        getGridSize,
+        setSnapEnabled,
+        getSnapEnabled,
+        snapToGrid
     };
 })();
 

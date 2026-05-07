@@ -173,6 +173,240 @@ function setupGlobalListeners() {
             Canvas.setGridSize(closest);
         });
     }
+
+    // Thiết lập checkbox snap
+    const snapCheckbox = document.getElementById('snap-checkbox');
+    if (snapCheckbox) {
+        snapCheckbox.addEventListener('change', (e) => {
+            Canvas.setSnapEnabled(e.target.checked);
+        });
+    }
+
+    // Thiết lập nút Save
+    const saveButton = document.getElementById('save-button');
+    if (saveButton) {
+        saveButton.addEventListener('click', () => {
+            saveProject();
+        });
+    }
+
+    // Thiết lập nút Load
+    const loadButton = document.getElementById('load-button');
+    if (loadButton) {
+        loadButton.addEventListener('click', () => {
+            loadProject();
+        });
+    }
+
+    // Thiết lập nút Reset to Default
+    const resetButton = document.getElementById('reset-button');
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            resetToDefault();
+        });
+    }
+}
+
+/**
+ * Cập nhật UI cho brush options.
+ */
+function updateBrushOptions() {
+    const brushSize = document.getElementById('brush-size');
+    const brushOpacity = document.getElementById('brush-opacity');
+    if (brushSize) {
+        const value = brushSize.value;
+        brushSize.nextElementSibling.textContent = value;
+    }
+    if (brushOpacity) {
+        const value = brushOpacity.value;
+        brushOpacity.nextElementSibling.textContent = value + '%';
+    }
+}
+
+/**
+ * Cập nhật UI cho grid.
+ */
+function updateGridUI() {
+    const gridSlider = document.getElementById('grid-slider');
+    const gridValue = document.getElementById('grid-value');
+    if (gridSlider && gridValue) {
+        const val = parseInt(gridSlider.value);
+        gridValue.textContent = val === 0 ? 'Off' : val + 'px';
+    }
+}
+
+/**
+ * Cập nhật UI cho symmetry.
+ */
+function updateSymmetryUI() {
+    const symmetryToggle = document.getElementById('symmetry-toggle');
+    const symmetryOptions = document.getElementById('symmetry-options');
+    if (symmetryToggle && symmetryOptions) {
+        symmetryOptions.style.display = symmetryToggle.checked ? 'block' : 'none';
+    }
+}
+
+/**
+ * Lưu toàn bộ trạng thái dự án thành file JSON.
+ */
+function saveProject() {
+    try {
+        const state = {
+            canvas: Canvas.toJSON(),
+            backgroundColor: document.getElementById('bg-color')?.value || '#ffffff',
+            drawColor: document.getElementById('draw-color')?.value || '#000000',
+            brushSize: document.getElementById('brush-size')?.value || 5,
+            brushOpacity: document.getElementById('brush-opacity')?.value || 100,
+            gridSize: Canvas.getGridSize(),
+            snapEnabled: Canvas.getSnapEnabled(),
+            symmetryEnabled: document.getElementById('symmetry-toggle')?.checked || false,
+            symmetryCount: document.getElementById('symmetry-count')?.value || 8,
+            layers: Layers.getLayers(),
+            history: History.getHistory(),
+            zoom: Canvas.getZoom(),
+            pan: Canvas.getPan()
+        };
+
+        const dataStr = JSON.stringify(state, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'mandala-project.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        alert('Error saving project: ' + error.message);
+        console.error('Save project error:', error);
+    }
+}
+
+/**
+ * Tải dự án từ file JSON.
+ */
+function loadProject() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const state = JSON.parse(event.target.result);
+                applyState(state);
+            } catch (error) {
+                alert('Invalid file format: ' + error.message);
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+/**
+ * Áp dụng trạng thái từ JSON.
+ */
+function applyState(state) {
+    try {
+        // Validate state
+        if (!state || typeof state !== 'object') {
+            throw new Error('Invalid state object');
+        }
+        if (!state.canvas) {
+            throw new Error('Missing canvas data');
+        }
+
+        // Canvas
+        Canvas.loadFromJSON(state.canvas, () => {
+            try {
+                Canvas.setBackgroundColor(state.backgroundColor || '#ffffff');
+                Canvas.renderAll();
+            } catch (e) {
+                console.error('Error setting background:', e);
+            }
+        });
+
+        // Settings
+        const bgColor = document.getElementById('bg-color');
+        if (bgColor) bgColor.value = state.backgroundColor || '#ffffff';
+
+        const drawColor = document.getElementById('draw-color');
+        if (drawColor) drawColor.value = state.drawColor || '#000000';
+
+        const brushSize = document.getElementById('brush-size');
+        if (brushSize) brushSize.value = state.brushSize || 5;
+
+        const brushOpacity = document.getElementById('brush-opacity');
+        if (brushOpacity) brushOpacity.value = state.brushOpacity || 100;
+
+        Canvas.setGridSize(state.gridSize || 0);
+        Canvas.setSnapEnabled(state.snapEnabled || false);
+
+        const symmetryToggle = document.getElementById('symmetry-toggle');
+        if (symmetryToggle) symmetryToggle.checked = state.symmetryEnabled || false;
+
+        const symmetryCount = document.getElementById('symmetry-count');
+        if (symmetryCount) symmetryCount.value = state.symmetryCount || 8;
+
+        if (state.layers) Layers.setLayers(state.layers);
+        if (state.history) History.setHistory(state.history);
+
+        Canvas.setZoom(state.zoom || 1);
+        Canvas.setPan(state.pan || { x: 0, y: 0 });
+
+        // Update UI
+        updateBrushOptions();
+        updateGridUI();
+        updateSymmetryUI();
+    } catch (error) {
+        alert('Error applying state: ' + error.message);
+        console.error('Apply state error:', error);
+    }
+}
+
+/**
+ * Reset tất cả về default.
+ */
+function resetToDefault() {
+    // Reset canvas
+    Canvas.clear();
+
+    // Reset settings
+    const bgColor = document.getElementById('bg-color');
+    if (bgColor) bgColor.value = '#ffffff';
+
+    const drawColor = document.getElementById('draw-color');
+    if (drawColor) drawColor.value = '#000000';
+
+    const brushSize = document.getElementById('brush-size');
+    if (brushSize) brushSize.value = 5;
+
+    const brushOpacity = document.getElementById('brush-opacity');
+    if (brushOpacity) brushOpacity.value = 100;
+
+    Canvas.setGridSize(0);
+    Canvas.setSnapEnabled(false);
+
+    const symmetryToggle = document.getElementById('symmetry-toggle');
+    if (symmetryToggle) symmetryToggle.checked = false;
+
+    const symmetryCount = document.getElementById('symmetry-count');
+    if (symmetryCount) symmetryCount.value = 8;
+
+    Layers.clearLayers();
+    History.clear();
+
+    Canvas.resetZoom();
+    Canvas.setPan({ x: 0, y: 0 });
+
+    // Update UI
+    updateBrushOptions();
+    updateGridUI();
+    updateSymmetryUI();
 }
 
 /**

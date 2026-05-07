@@ -503,13 +503,46 @@ const Layers = (function() {
         }
     }
     
+    /**
+     * Lấy danh sách layers.
+     * @returns {Array}
+     */
+    function getLayers() {
+        return layers;
+    }
+    
+    /**
+     * Thiết lập danh sách layers.
+     * @param {Array} newLayers
+     */
+    function setLayers(newLayers) {
+        layers = newLayers;
+        activeLayerIndex = 0;
+        layerCounter = layers.length;
+        renderLayerList();
+        syncAllLayers();
+    }
+    
+    /**
+     * Xóa sạch layers, chỉ giữ lại layer mặc định.
+     */
+    function clearLayers() {
+        layers = [];
+        createDefaultLayers();
+        activeLayerIndex = 0;
+        renderLayerList();
+        syncAllLayers();
+    }
+    
     return {
         init,
         addLayer,
         deleteLayer,
         setActiveLayer,
         getActiveLayer,
-        getAllLayers: () => layers,
+        getLayers,
+        setLayers,
+        clearLayers,
         renderLayerList
     };
 })();

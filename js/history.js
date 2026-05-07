@@ -119,6 +119,25 @@ const History = (function() {
     }
     
     /**
+     * Lấy danh sách lịch sử.
+     * @returns {Array}
+     */
+    function getHistory() {
+        return history;
+    }
+    
+    /**
+     * Thiết lập danh sách lịch sử.
+     * @param {Array} newHistory
+     */
+    function setHistory(newHistory) {
+        history = newHistory;
+        historyIndex = newHistory.length - 1;
+        initialized = true;
+        EventBus.emit('history:changed', getStatus());
+    }
+    
+    /**
      * Xóa sạch lịch sử.
      */
     function clear() {
@@ -145,7 +164,9 @@ const History = (function() {
         undo,
         redo,
         clear,
-        getStatus
+        getStatus,
+        getHistory,
+        setHistory
     };
 })();
 

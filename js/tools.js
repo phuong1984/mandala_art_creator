@@ -49,6 +49,13 @@ const Tools = (function() {
         canvas.freeDrawingBrush.width = brushSize;
         canvas.freeDrawingBrush.decimate = 4; // Giảm bớt số lượng điểm để đường vẽ mượt hơn
         
+        // Override _captureDrawingPath to snap points - removed to fix display issue
+        // const originalCapture = canvas.freeDrawingBrush._captureDrawingPath;
+        // canvas.freeDrawingBrush._captureDrawingPath = function(pointer) {
+        //     pointer = Canvas.snapToGrid(pointer);
+        //     originalCapture.call(this, pointer);
+        // };
+        
         let mirrorPaths = [];
         let drawingPoints = [];
         
@@ -58,7 +65,7 @@ const Tools = (function() {
             
             const symmetryCount = SymmetryMode.getSymmetryCount();
             mirrorPaths = [];
-            drawingPoints = [canvas.getPointer(options.e)];
+            drawingPoints = [Canvas.snapToGrid(canvas.getPointer(options.e))];
             
             // Tạo các đường vẽ ảo (Polyline) để hiển thị các bản sao đối xứng ngay khi đang vẽ
             for (let i = 1; i < symmetryCount; i++) {
@@ -96,7 +103,7 @@ const Tools = (function() {
             const center = Canvas.getCenter();
             const symmetryCount = SymmetryMode.getSymmetryCount();
             
-            drawingPoints.push(canvas.getPointer(options.e));
+            drawingPoints.push(Canvas.snapToGrid(canvas.getPointer(options.e)));
             
             for (let i = 1; i < symmetryCount; i++) {
                 const angle = (i / symmetryCount) * Math.PI * 2;
@@ -134,11 +141,33 @@ const Tools = (function() {
             const path = e.path;
             if (!path) return;
             
+            // Snap path start and end points if snap is enabled
+            if (Canvas.getSnapEnabled() && Canvas.getGridSize() > 0) {
+                const gridSize = Canvas.getGridSize();
+                if (path.path && path.path.length > 0) {
+                    // Snap start point (first command, usually 'M')
+                    const startCmd = path.path[0];
+                    if (startCmd.length >= 3) {
+                        startCmd[1] = Math.round(startCmd[1] / gridSize) * gridSize;
+                        startCmd[2] = Math.round(startCmd[2] / gridSize) * gridSize;
+                    }
+                    // Snap end point (last command)
+                    const endCmd = path.path[path.path.length - 1];
+                    if (endCmd.length >= 3) {
+                        const lastX = endCmd[endCmd.length - 2];
+                        const lastY = endCmd[endCmd.length - 1];
+                        endCmd[endCmd.length - 2] = Math.round(lastX / gridSize) * gridSize;
+                        endCmd[endCmd.length - 1] = Math.round(lastY / gridSize) * gridSize;
+                    }
+                }
+                path.setCoords();
+            }
+            
             if (SymmetryMode.isEnabled()) {
                 Shapes.applySymmetryToShape(path);
             }
             
-            History.add('brush symmetry');
+            History.add('brush');
         });
     }
     
