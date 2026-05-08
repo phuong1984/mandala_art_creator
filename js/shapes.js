@@ -483,6 +483,7 @@ const Shapes = (function () {
         if (source.symmetryBaseShape !== undefined) obj.symmetryBaseShape = source.symmetryBaseShape;
         if (source.savedSymmetryCount !== undefined) obj.savedSymmetryCount = source.savedSymmetryCount;
         if (source.savedSymmetryAngle !== undefined) obj.savedSymmetryAngle = source.savedSymmetryAngle;
+        if (source.isBrushStroke !== undefined) obj.isBrushStroke = source.isBrushStroke;
         
         let clone;
         if (source.type === 'rect') clone = new fabric.Rect(obj);

@@ -8,7 +8,7 @@ A web-based mandala creation application that allows users to draw, color, and c
 ### Core Functionality
 - **Canvas Drawing**: Freehand brush and geometric shapes
 - **Color System**: Color picker, palettes, custom colors
-- **Fill Tool**: Flood fill for coloring enclosed areas
+- **Object Editing**: Property panel for stroke, fill and width
 - **Layers**: Multiple layers with visibility, opacity, locking
 - **Mandala Generator**: Algorithm-based pattern creation with symmetry options
 - **Export**: PNG (web/print), JSON project save/load
@@ -97,7 +97,6 @@ A web-based mandala creation application that allows users to draw, color, and c
 │   ├── canvas.js (Fabric.js wrapper)
 │   ├── tools.js
 │   ├── shapes.js
-│   ├── fill.js
 │   ├── layers.js
 │   ├── palette.js
 │   ├── mandala-generator.js
@@ -121,7 +120,8 @@ A web-based mandala creation application that allows users to draw, color, and c
 - [ ] Free brush tool with size/opacity
 - [ ] Shape tools (line, rectangle, circle, etc.)
 - [ ] Color picker implementation
-- [ ] Fill bucket tool
+- [ ] Object properties panel (Stroke, Fill, Width)
+- [ ] Symmetry group editing
 
 ### Phase 3: Advanced Features
 - [ ] Shape node editing functionality

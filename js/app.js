@@ -21,7 +21,6 @@ function initApp() {
         SymmetryMode.init();
         Tools.init();
         Shapes.init();
-        Fill.init();
         Layers.init();
 
         // 3. Khởi tạo hệ thống lưu trữ và đa ngôn ngữ
@@ -208,22 +207,6 @@ function setupGlobalListeners() {
 }
 
 /**
- * Cập nhật UI cho brush options.
- */
-function updateBrushOptions() {
-    const brushSize = document.getElementById('brush-size');
-    const brushOpacity = document.getElementById('brush-opacity');
-    if (brushSize) {
-        const value = brushSize.value;
-        brushSize.nextElementSibling.textContent = value;
-    }
-    if (brushOpacity) {
-        const value = brushOpacity.value;
-        brushOpacity.nextElementSibling.textContent = value + '%';
-    }
-}
-
-/**
  * Cập nhật UI cho grid.
  */
 function updateGridUI() {
@@ -255,8 +238,8 @@ function saveProject() {
             canvas: Canvas.toJSON(),
             backgroundColor: document.getElementById('bg-color')?.value || '#ffffff',
             drawColor: document.getElementById('draw-color')?.value || '#000000',
-            brushSize: document.getElementById('brush-size')?.value || 5,
-            brushOpacity: document.getElementById('brush-opacity')?.value || 100,
+            brushSize: document.getElementById('prop-stroke-width')?.value || 5,
+            brushOpacity: document.getElementById('prop-opacity')?.value || 100,
             gridSize: Canvas.getGridSize(),
             snapEnabled: Canvas.getSnapEnabled(),
             symmetryEnabled: document.getElementById('symmetry-toggle')?.checked || false,
@@ -337,11 +320,11 @@ function applyState(state) {
         const drawColor = document.getElementById('draw-color');
         if (drawColor) drawColor.value = state.drawColor || '#000000';
 
-        const brushSize = document.getElementById('brush-size');
-        if (brushSize) brushSize.value = state.brushSize || 5;
+        const brushSize = document.getElementById('prop-stroke-width');
+        if (brushSize && state.brushSize) brushSize.value = state.brushSize;
 
-        const brushOpacity = document.getElementById('brush-opacity');
-        if (brushOpacity) brushOpacity.value = state.brushOpacity || 100;
+        const brushOpacity = document.getElementById('prop-opacity');
+        if (brushOpacity && state.brushOpacity) brushOpacity.value = state.brushOpacity;
 
         Canvas.setGridSize(state.gridSize || 0);
         Canvas.setSnapEnabled(state.snapEnabled || false);
@@ -359,9 +342,9 @@ function applyState(state) {
         Canvas.setPan(state.pan || { x: 0, y: 0 });
 
         // Update UI
-        updateBrushOptions();
         updateGridUI();
         updateSymmetryUI();
+        if (window.Properties) window.Properties.updatePanel();
     } catch (error) {
         alert('Error applying state: ' + error.message);
         console.error('Apply state error:', error);
@@ -382,10 +365,10 @@ function resetToDefault() {
     const drawColor = document.getElementById('draw-color');
     if (drawColor) drawColor.value = '#000000';
 
-    const brushSize = document.getElementById('brush-size');
+    const brushSize = document.getElementById('prop-stroke-width');
     if (brushSize) brushSize.value = 5;
 
-    const brushOpacity = document.getElementById('brush-opacity');
+    const brushOpacity = document.getElementById('prop-opacity');
     if (brushOpacity) brushOpacity.value = 100;
 
     Canvas.setGridSize(0);
@@ -403,9 +386,6 @@ function resetToDefault() {
         SymmetryMode.setSymmetry(8);
     }
     
-    // Update symmetry UI to reflect the new state
-    SymmetryMode.updateUI();
-
     Layers.clearLayers();
     History.clear();
 
@@ -413,7 +393,6 @@ function resetToDefault() {
     Canvas.setPan({ x: 0, y: 0 });
 
     // Update UI
-    updateBrushOptions();
     updateGridUI();
     updateSymmetryUI();
 }
@@ -421,7 +400,7 @@ function resetToDefault() {
 /**
  * Xử lý các phím tắt bàn phím cho ứng dụng.
  * @param {KeyboardEvent} e - Đối tượng sự kiện bàn phím.
- * Các phím tắt bao gồm: Ctrl+Z (Hoàn tác), Ctrl+Y (Làm lại), phím tắt cho công cụ (B, S, F), v.v.
+ * Các phím tắt bao gồm: Ctrl+Z (Hoàn tác), Ctrl+Y (Làm lại), phím tắt cho công cụ (B, S), v.v.
  */
 function handleKeyboardShortcuts(e) {
     // 1. Không xử lý phím tắt nếu người dùng đang nhập liệu trong các ô input
@@ -466,9 +445,6 @@ function handleKeyboardShortcuts(e) {
             break;
         case 's': // S: Chọn công cụ hình khối (Shape)
             if (!isCtrl) Tools.setActiveTool('shape');
-            break;
-        case 'f': // F: Chọn công cụ tô màu (Fill)
-            if (!isCtrl) Tools.setActiveTool('fill');
             break;
         case 'm': // M: Bật/tắt đối xứng (Symmetry)
             if (!isCtrl) {

@@ -91,31 +91,37 @@ const I18n = (function() {
         return value;
     }
     
-    let cachedElements = null;
+    /**
+     * Cập nhật bản dịch cho một phần tử UI duy nhất.
+     * @param {HTMLElement} element - Phần tử cần cập nhật.
+     */
+    function updateElement(element) {
+        if (!element) return;
+        const key = element.getAttribute('data-i18n');
+        if (!key) return;
+        
+        const translation = t(key);
+        if (translation && translation !== key) {
+            if (element.tagName === 'INPUT' && (element.type === 'text' || element.type === 'search')) {
+                element.placeholder = translation;
+            } else if (element.hasAttribute('title')) {
+                if (key.startsWith('[title]')) {
+                    element.title = translation;
+                } else {
+                    element.textContent = translation;
+                }
+            } else {
+                element.textContent = translation;
+            }
+        }
+    }
     
     /**
      * Cập nhật tất cả các thành phần UI có thuộc tính `data-i18n`.
      */
     function updateUI() {
-        // 1. Cache các phần tử có thuộc tính data-i18n để tăng hiệu năng cho lần gọi sau
-        if (!cachedElements) {
-            cachedElements = document.querySelectorAll('[data-i18n]');
-        }
-        
-        // 2. Duyệt qua từng phần tử và áp dụng bản dịch tương ứng
-        cachedElements.forEach(element => {
-            const key = element.getAttribute('data-i18n');
-            const translation = t(key);
-            
-            if (translation && translation !== key) {
-                // 3. Xử lý riêng cho các thẻ input text (dùng placeholder) và các thẻ khác (dùng textContent)
-                if (element.tagName === 'INPUT' && element.type === 'text') {
-                    element.placeholder = translation;
-                } else {
-                    element.textContent = translation;
-                }
-            }
-        });
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(element => updateElement(element));
     }
     
     /**
@@ -144,7 +150,7 @@ const I18n = (function() {
         };
     }
     
-    return { init, setLanguage, t, updateUI, getCurrentLanguage: () => currentLanguage };
+    return { init, setLanguage, t, updateUI, updateElement, getCurrentLanguage: () => currentLanguage };
 })();
 
 window.I18n = I18n;

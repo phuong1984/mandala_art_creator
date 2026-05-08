@@ -7,7 +7,6 @@
     "tools": {
         "brush": "Brush",
         "eraser": "Eraser",
-        "fill": "Fill Bucket",
         "shapes": "Shapes",
         "line": "Line",
         "curve": "Curve",
@@ -28,12 +27,19 @@
         "delete": "Delete Layer",
         "lock": "Lock Layer",
         "unlock": "Unlock Layer",
-        "visibility": "Toggle Visibility",
+        "visibility": "Visibility",
         "opacity": "Layer Opacity",
         "rename": "Rename Layer",
         "duplicate": "Duplicate Layer",
         "merge": "Merge Down",
         "empty": "No layers"
+    },
+    "properties": {
+        "title": "Properties",
+        "stroke": "Stroke",
+        "fill": "Fill",
+        "strokeWidth": "Width",
+        "applySymmetry": "Apply to Symmetry Group"
     },
     "palette": {
         "title": "Color Palette",
@@ -113,7 +119,6 @@
         "shortcuts": "Keyboard Shortcuts",
         "brushShort": "Free draw mode",
         "shapesShort": "Shape tool",
-        "fillShort": "Fill tool",
         "undoShort": "Undo (Ctrl+Z)",
         "redoShort": "Redo (Ctrl+Y)",
         "deleteShort": "Delete selected (Del)",

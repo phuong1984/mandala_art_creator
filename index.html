@@ -49,6 +49,34 @@
                     </div>
                     <div id="layer-list" class="layer-list"></div>
                 </div>
+
+                <div id="properties-panel" class="properties-panel panel">
+                    <h2 class="panel-title" id="prop-panel-title" data-i18n="properties.title">Properties</h2>
+                    <div class="option-row" id="prop-stroke-row">
+                        <label data-i18n="properties.stroke">Stroke</label>
+                        <input type="color" id="prop-stroke-color" value="#000000">
+                    </div>
+                    <div class="option-row" id="prop-fill-row">
+                        <label data-i18n="properties.fill">Fill</label>
+                        <input type="color" id="prop-fill-color" value="#ffffff">
+                    </div>
+                    <div class="option-row">
+                        <label data-i18n="properties.strokeWidth" id="prop-width-label">Width</label>
+                        <input type="range" id="prop-stroke-width" min="0" max="50" value="2">
+                        <span class="value">2</span>
+                    </div>
+                    <div class="option-row" id="prop-opacity-row">
+                        <label data-i18n="tools.opacity">Opacity</label>
+                        <input type="range" id="prop-opacity" min="0" max="100" value="100">
+                        <span class="value">100%</span>
+                    </div>
+                    <div class="option-row" id="prop-symmetry-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="prop-apply-symmetry" checked>
+                            <span data-i18n="properties.applySymmetry">Apply to Symmetry Group</span>
+                        </label>
+                    </div>
+                </div>
             </aside>
 
             <div class="canvas-wrapper">
@@ -75,36 +103,13 @@
             </div>
 
             <div class="tool-group tools">
-                <div class="tool-dropdown">
-                    <button id="brush-tool-button" class="tool-button active" aria-label="Brush Tool">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-                            <path d="M2 2l7.586 7.586"/>
-                        </svg>
-                        <span data-i18n="tools.brush">Brush</span>
-                    </button>
-                    <div id="brush-options" class="tool-options panel">
-                        <div class="option-row">
-                            <label data-i18n="tools.size">Size</label>
-                            <input type="range" id="brush-size" min="1" max="50" value="5">
-                            <span class="value">5</span>
-                        </div>
-                        <div class="option-row">
-                            <label data-i18n="tools.opacity">Opacity</label>
-                            <input type="range" id="brush-opacity" min="0" max="100" value="100">
-                            <span class="value">100%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <button id="fill-tool-button" class="tool-button" aria-label="Fill Tool" title="Fill Bucket">
+                <button id="brush-tool-button" class="tool-button active" aria-label="Brush Tool">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 11V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h5"/>
-                        <path d="M12 11v9"/>
-                        <path d="M8 20h8"/>
+                        <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                        <path d="M2 2l7.586 7.586"/>
                     </svg>
-                    <span data-i18n="tools.fill">Fill</span>
+                    <span data-i18n="tools.brush">Brush</span>
                 </button>
 
                 <div class="separator"></div>
@@ -276,12 +281,11 @@
     <script src="js/symmetry.js"></script>
     <script src="js/canvas.js"></script>
     <script src="js/history.js"></script>
+    <script src="js/properties.js"></script>
     <script src="js/tools.js"></script>
     <script src="js/shapes.js"></script>
-    <script src="js/fill.js"></script>
     <script src="js/layers.js"></script>
     <script src="js/palette.js"></script>
-
     <script src="js/storage.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/app.js"></script>

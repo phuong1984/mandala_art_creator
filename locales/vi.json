@@ -7,7 +7,6 @@
     "tools": {
         "brush": "Cọ vẽ",
         "eraser": "Tẩy",
-        "fill": "Tô màu",
         "shapes": "Hình dạng",
         "line": "Đường thẳng",
         "curve": "Đường cong",
@@ -34,6 +33,13 @@
         "duplicate": "Nhân bản lớp",
         "merge": "Gộp xuống",
         "empty": "Không có lớp"
+    },
+    "properties": {
+        "title": "Thuộc tính",
+        "stroke": "Viền",
+        "fill": "Tô màu",
+        "strokeWidth": "Độ dày",
+        "applySymmetry": "Áp dụng cho cả nhóm"
     },
     "palette": {
         "title": "Bảng màu",
@@ -113,7 +119,6 @@
         "shortcuts": "Phím tắt",
         "brushShort": "Chế độ vẽ tự do",
         "shapesShort": "Công cụ hình dạng",
-        "fillShort": "Công cụ tô màu",
         "undoShort": "Hoàn tác (Ctrl+Z)",
         "redoShort": "Làm lại (Ctrl+Y)",
         "deleteShort": "Xóa đã chọn (Del)",
