@@ -251,18 +251,6 @@ body {
     background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
 
-.canvas-border {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 800px;
-    height: 800px;
-    border: 2px solid var(--accent-primary);
-    pointer-events: none;
-    z-index: 4;
-    box-sizing: border-box;
-}
-
 .grid-overlay {
     position: absolute;
     top: 0;

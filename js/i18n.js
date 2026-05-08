@@ -132,21 +132,19 @@ const I18n = (function() {
     function getInlineTranslations(lang) {
         if (lang === 'vi') {
             return {
-                app: { title: 'Mandala Art Creator', freeMode: 'Tự do', templateMode: 'Mẫu có sẵn' },
-                tools: { brush: 'Cọ vẽ', fill: 'Tô màu', shapes: 'Hình dạng', size: 'Kích thước', opacity: 'Độ mờ' },
-                shapes: { line: 'Đường thẳng', rectangle: 'Hình chữ nhật', square: 'Hình vuông', circle: 'Hình tròn', ellipse: 'Hình elip', triangle: 'Tam giác', diamond: 'Hình thoi', parallelogram: 'Hình bình hành', arc: 'Cung tròn' },
+                app: { title: 'Mandala Art Creator' },
+                tools: { brush: 'Cọ vẽ', size: 'Kích thước', opacity: 'Độ mờ' },
+                shapes: { line: 'Đường thẳng', rectangle: 'Hình chữ nhật', square: 'Hình vuông', circle: 'Hình tròn', ellipse: 'Hình elip', triangle: 'Tam giác', diamond: 'Hình thoi' },
                 layers: { title: 'Lớp' },
-                canvas: { background: 'Nền' },
-                messages: { exported: 'Đã xuất', copied: 'Đã sao chép' }
+                canvas: { background: 'Nền' }
             };
         }
         return {
-            app: { title: 'Mandala Art Creator', freeMode: 'Free Draw', templateMode: 'Templates' },
-            tools: { brush: 'Brush', fill: 'Fill', shapes: 'Shapes', size: 'Size', opacity: 'Opacity' },
-            shapes: { line: 'Line', rectangle: 'Rectangle', square: 'Square', circle: 'Circle', ellipse: 'Ellipse', triangle: 'Triangle', diamond: 'Diamond', parallelogram: 'Parallelogram', arc: 'Arc' },
+            app: { title: 'Mandala Art Creator' },
+            tools: { brush: 'Brush', size: 'Size', opacity: 'Opacity' },
+            shapes: { line: 'Line', rectangle: 'Rectangle', square: 'Square', circle: 'Circle', ellipse: 'Ellipse', triangle: 'Triangle', diamond: 'Diamond' },
             layers: { title: 'Layers' },
-            canvas: { background: 'Background' },
-            messages: { exported: 'Exported', copied: 'Copied to clipboard' }
+            canvas: { background: 'Background' }
         };
     }
     

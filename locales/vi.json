@@ -1,38 +1,23 @@
 {
     "app": {
-        "title": "Mandala Art Creator",
-        "freeMode": "Tự do",
-        "templateMode": "Mẫu có sẵn"
+        "title": "Mandala Art Creator"
     },
     "tools": {
         "brush": "Cọ vẽ",
-        "eraser": "Tẩy",
-        "shapes": "Hình dạng",
+        "size": "Kích thước",
+        "opacity": "Độ mờ"
+    },
+    "shapes": {
         "line": "Đường thẳng",
-        "curve": "Đường cong",
         "circle": "Hình tròn",
         "ellipse": "Hình elip",
         "rectangle": "Hình chữ nhật",
         "square": "Hình vuông",
         "diamond": "Hình thoi",
-        "parallelogram": "Hình bình hành",
-        "arc": "Cung tròn",
-        "triangle": "Hình tam giác",
-        "size": "Kích thước",
-        "opacity": "Độ mờ"
+        "triangle": "Hình tam giác"
     },
     "layers": {
-        "title": "Lớp",
-        "add": "Thêm lớp",
-        "delete": "Xóa lớp",
-        "lock": "Khóa lớp",
-        "unlock": "Mở khóa lớp",
-        "visibility": "Bật/tắt hiển thị",
-        "opacity": "Độ mờ lớp",
-        "rename": "Đổi tên lớp",
-        "duplicate": "Nhân bản lớp",
-        "merge": "Gộp xuống",
-        "empty": "Không có lớp"
+        "title": "Lớp"
     },
     "properties": {
         "title": "Thuộc tính",
@@ -41,88 +26,7 @@
         "strokeWidth": "Độ dày",
         "applySymmetry": "Áp dụng cho cả nhóm"
     },
-    "palette": {
-        "title": "Bảng màu",
-        "rainbow": "Cầu vồng",
-        "pastel": "Pastel",
-        "earth": "Đất",
-        "ocean": "Đại dương",
-        "sunset": "Hoàng hôn",
-        "forest": "Rừng",
-        "neon": "Neon",
-        "grayscale": "Xám",
-        "recent": "Màu gần đây",
-        "custom": "Bảng màu tùy chỉnh"
-    },
-    "actions": {
-        "undo": "Hoàn tác",
-        "redo": "Làm lại",
-        "delete": "Xóa",
-        "save": "Lưu",
-        "export": "Xuất",
-        "exportPNG": "Xuất PNG",
-        "exportPrint": "Xuất để in",
-        "exportJSON": "Xuất dự án",
-        "share": "Chia sẻ",
-        "import": "Nhập",
-        "importProject": "Nhập dự án",
-        "clear": "Xóa canvas",
-        "clearAll": "Xóa tất cả",
-        "close": "Đóng",
-        "cancel": "Hủy",
-        "confirm": "Xác nhận",
-        "ok": "OK"
-    },
-    "settings": {
-        "title": "Cài đặt",
-        "language": "Ngôn ngữ",
-        "theme": "Giao diện",
-        "light": "Sáng",
-        "dark": "Tối",
-        "autoSave": "Tự động lưu",
-        "gridSnap": "Snap lưới"
-    },
     "canvas": {
-        "zoom": "Thu phóng",
-        "zoomIn": "Phóng to",
-        "zoomOut": "Thu nhỏ",
-        "resetZoom": "Đặt lại thu phóng",
-        "pan": "Di chuyển",
-        "background": "BG"
-    },
-    "projects": {
-        "title": "Dự án",
-        "new": "Dự án mới",
-        "open": "Mở dự án",
-        "recent": "Dự án gần đây",
-        "untitled": "Không tiêu đề",
-        "created": "Đã tạo",
-        "modified": "Sửa lần cuối",
-        "noProjects": "Không có dự án đã lưu",
-        "deleteConfirm": "Bạn có chắc muốn xóa dự án này không?"
-    },
-    "messages": {
-        "autoSaved": "Đã tự động lưu",
-        "saved": "Đã lưu dự án",
-        "exported": "Xuất thành công",
-        "copied": "Đã sao chép vào clipboard",
-        "imported": "Đã nhập dự án",
-        "cleared": "Đã xóa canvas",
-        "deleted": "Đã xóa",
-        "error": "Đã xảy ra lỗi",
-        "loading": "Đang tải...",
-        "saving": "Đang lưu...",
-        "unsavedChanges": "Bạn có thay đổi chưa lưu"
-    },
-    "help": {
-        "title": "Trợ giúp",
-        "shortcuts": "Phím tắt",
-        "brushShort": "Chế độ vẽ tự do",
-        "shapesShort": "Công cụ hình dạng",
-        "undoShort": "Hoàn tác (Ctrl+Z)",
-        "redoShort": "Làm lại (Ctrl+Y)",
-        "deleteShort": "Xóa đã chọn (Del)",
-        "zoomShort": "Thu phóng (Ctrl+/-)",
-        "resetZoomShort": "Đặt lại thu phóng (Ctrl+0)"
+        "background": "Nền"
     }
 }
