@@ -22,6 +22,7 @@ function initApp() {
         Tools.init();
         Shapes.init();
         Layers.init();
+        Palette.init();
 
         // 3. Khởi tạo hệ thống lưu trữ và đa ngôn ngữ
         Storage.init();
@@ -116,9 +117,7 @@ function setupGlobalListeners() {
         symmetryToggle.addEventListener('change', (e) => {
             console.log('Symmetry toggle changed:', e.target.checked);
             SymmetryMode.setEnabled(e.target.checked);
-            Tools.updateSymmetryUI();
             
-            // Hiển thị thông báo trạng thái đối xứng
             if (e.target.checked) {
                 showNotification(`Symmetry: ${symmetryCount?.value || 8}-fold`, 'success');
             }
@@ -203,29 +202,6 @@ function setupGlobalListeners() {
         resetButton.addEventListener('click', () => {
             resetToDefault();
         });
-    }
-}
-
-/**
- * Cập nhật UI cho grid.
- */
-function updateGridUI() {
-    const gridSlider = document.getElementById('grid-slider');
-    const gridValue = document.getElementById('grid-value');
-    if (gridSlider && gridValue) {
-        const val = parseInt(gridSlider.value);
-        gridValue.textContent = val === 0 ? 'Off' : val + 'px';
-    }
-}
-
-/**
- * Cập nhật UI cho symmetry.
- */
-function updateSymmetryUI() {
-    const symmetryToggle = document.getElementById('symmetry-toggle');
-    const symmetryOptions = document.getElementById('symmetry-options');
-    if (symmetryToggle && symmetryOptions) {
-        symmetryOptions.style.display = symmetryToggle.checked ? 'block' : 'none';
     }
 }
 
@@ -329,11 +305,8 @@ function applyState(state) {
         Canvas.setGridSize(state.gridSize || 0);
         Canvas.setSnapEnabled(state.snapEnabled || false);
 
-        const symmetryToggle = document.getElementById('symmetry-toggle');
-        if (symmetryToggle) symmetryToggle.checked = state.symmetryEnabled || false;
-
-        const symmetryCount = document.getElementById('symmetry-count');
-        if (symmetryCount) symmetryCount.value = state.symmetryCount || 8;
+        SymmetryMode.setEnabled(state.symmetryEnabled || false);
+        SymmetryMode.setSymmetry(state.symmetryCount || 8);
 
         if (state.layers) Layers.setLayers(state.layers);
         if (state.history) History.setHistory(state.history);
@@ -341,9 +314,6 @@ function applyState(state) {
         Canvas.setZoom(state.zoom || 1);
         Canvas.setPan(state.pan || { x: 0, y: 0 });
 
-        // Update UI
-        updateGridUI();
-        updateSymmetryUI();
         if (window.Properties) window.Properties.updatePanel();
     } catch (error) {
         alert('Error applying state: ' + error.message);
@@ -374,27 +344,14 @@ function resetToDefault() {
     Canvas.setGridSize(0);
     Canvas.setSnapEnabled(false);
 
-    const symmetryToggle = document.getElementById('symmetry-toggle');
-    if (symmetryToggle) {
-        symmetryToggle.checked = true;
-        SymmetryMode.setEnabled(true);
-    }
-
-    const symmetryCount = document.getElementById('symmetry-count');
-    if (symmetryCount) {
-        symmetryCount.value = 8;
-        SymmetryMode.setSymmetry(8);
-    }
+    SymmetryMode.setEnabled(true);
+    SymmetryMode.setSymmetry(8);
     
     Layers.clearLayers();
     History.clear();
 
     Canvas.resetZoom();
     Canvas.setPan({ x: 0, y: 0 });
-
-    // Update UI
-    updateGridUI();
-    updateSymmetryUI();
 }
 
 /**
@@ -449,9 +406,6 @@ function handleKeyboardShortcuts(e) {
         case 'm': // M: Bật/tắt đối xứng (Symmetry)
             if (!isCtrl) {
                 SymmetryMode.setEnabled(!SymmetryMode.isEnabled());
-                const toggle = document.getElementById('symmetry-toggle');
-                if (toggle) toggle.checked = SymmetryMode.isEnabled();
-                Tools.updateSymmetryUI();
             }
             break;
     }

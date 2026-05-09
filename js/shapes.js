@@ -561,29 +561,6 @@ const Shapes = (function () {
                 top: Math.min(start.y, end.y)
             });
         },
-        parallelogram: (start, end, commonProps) => {
-            const pWidth = Math.abs(end.x - start.x);
-            const pHeight = Math.abs(end.y - start.y);
-            const skew = pWidth * 0.2;
-            return new fabric.Polygon([
-                { x: skew, y: 0 },
-                { x: pWidth, y: 0 },
-                { x: pWidth - skew, y: pHeight },
-                { x: 0, y: pHeight }
-            ], {
-                ...commonProps,
-                left: Math.min(start.x, end.x),
-                top: Math.min(start.y, end.y)
-            });
-        },
-        arc: (start, end, commonProps) => {
-            const arcRadius = Math.abs(end.x - start.x);
-            const arcPath = `M ${start.x - arcRadius} ${start.y} A ${arcRadius} ${arcRadius} 0 0 1 ${start.x + arcRadius} ${start.y}`;
-            return new fabric.Path(arcPath, {
-                ...commonProps,
-                fill: null
-            });
-        }
     };
 
     /**
@@ -684,22 +661,6 @@ const Shapes = (function () {
     }
 
     /**
-     * Bật các điểm điều khiển (nodes) để người dùng có thể kéo dãn/xoay hình.
-     * @param {fabric.Object} shape 
-     */
-    function enableNodeEditing(shape) {
-        if (!shape) return;
-        shape.set({
-            hasControls: true,
-            hasBorders: true,
-            cornerColor: '#0d6efd',
-            cornerStyle: 'circle',
-            transparentCorners: false,
-            cornerSize: 10
-        });
-    }
-
-    /**
      * Snap shape properties to grid.
      * @param {fabric.Object} shape
      */
@@ -765,10 +726,7 @@ const Shapes = (function () {
 
     return {
         init,
-        createShape,
         setShapeType,
-        enableNodeEditing,
-        getShapeType: () => currentShape,
         applySymmetryToShape
     };
 })();

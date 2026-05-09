@@ -198,52 +198,6 @@ const Storage = (function() {
     }
     
     /**
-     * Xóa một dự án khỏi cơ sở dữ liệu.
-     * @param {string} id - ID dự án cần xóa.
-     * @returns {Promise}
-     */
-    async function deleteProject(id) {
-        try {
-            await dbPromise;
-            if (!db) return;
-            
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                store.delete(id);
-                
-                transaction.oncomplete = () => resolve();
-                transaction.onerror = () => reject(transaction.error);
-            });
-        } catch (e) {
-            console.error('Delete project error:', e);
-        }
-    }
-    
-    /**
-     * Lấy danh sách tất cả các dự án đã lưu.
-     * @returns {Promise<Array>}
-     */
-    async function getAllProjects() {
-        try {
-            await dbPromise;
-            if (!db) return [];
-            
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readonly');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.getAll();
-                
-                request.onsuccess = () => resolve(request.result || []);
-                request.onerror = () => reject(request.error);
-            });
-        } catch (e) {
-            console.error('Get projects error:', e);
-            return [];
-        }
-    }
-    
-    /**
      * Tải lại dự án cuối cùng mà người dùng đã làm việc.
      */
     function loadLastProject() {
@@ -271,13 +225,6 @@ const Storage = (function() {
         if (dataURL) {
             downloadFile(dataURL, 'mandala-artwork.png', 'image/png');
         }
-    }
-    
-    /**
-     * Xuất ảnh PNG độ phân giải cao (gấp 4 lần).
-     */
-    function exportHighResPNG() {
-        exportPNG(4);
     }
     
     /**
@@ -341,12 +288,9 @@ const Storage = (function() {
         saveCurrentProject,
         saveProject,
         loadProject,
-        deleteProject,
-        getAllProjects,
         loadLastProject,
         autoSave,
         exportPNG,
-        exportHighResPNG,
         shareToClipboard
     };
 })();

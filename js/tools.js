@@ -25,7 +25,6 @@ const Tools = (function() {
         }
         setupBrushTool();
         setupToolButtons();
-        setupShapeOptions();
         setupActionButtons();
         setupSymmetryControls();
     }
@@ -43,6 +42,7 @@ const Tools = (function() {
         canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
         canvas.freeDrawingBrush.color = drawColor;
         canvas.freeDrawingBrush.width = brushSize;
+        canvas.freeDrawingBrush.opacity = brushOpacity / 100;
         canvas.freeDrawingBrush.decimate = 4; // Giảm bớt số lượng điểm để đường vẽ mượt hơn
         
         let mirrorPaths = [];
@@ -184,18 +184,6 @@ const Tools = (function() {
     }
     
     /**
-     * Thiết lập trình lắng nghe cho việc chọn loại hình khối.
-     */
-    function setupShapeOptions() {
-        const shapeTypeSelect = document.getElementById('shape-type');
-        if (shapeTypeSelect) {
-            shapeTypeSelect.addEventListener('change', (e) => {
-                Shapes.setShapeType(e.target.value);
-            });
-        }
-    }
-    
-    /**
      * Thiết lập các nút hành động (Undo, Redo, Xóa, Xuất ảnh, v.v.).
      */
     function setupActionButtons() {
@@ -256,14 +244,12 @@ const Tools = (function() {
         if (symmetryToggle) {
             symmetryToggle.addEventListener('change', (e) => {
                 SymmetryMode.setEnabled(e.target.checked);
-                updateSymmetryUI();
             });
         }
         
         if (symmetryCount) {
             symmetryCount.addEventListener('change', (e) => {
                 SymmetryMode.setSymmetry(parseInt(e.target.value));
-                updateSymmetryUI();
             });
         }
     }
@@ -336,6 +322,9 @@ const Tools = (function() {
      */
     function setBrushOpacity(opacity) {
         brushOpacity = opacity;
+        if (canvas && canvas.freeDrawingBrush) {
+            canvas.freeDrawingBrush.opacity = opacity / 100;
+        }
     }
 
     /**
@@ -354,16 +343,6 @@ const Tools = (function() {
         return brushOpacity;
     }
     
-    /**
-     * Cập nhật hiển thị giao diện của các tùy chọn đối xứng.
-     */
-    function updateSymmetryUI() {
-        const symmetryOptions = document.getElementById('symmetry-options');
-        if (symmetryOptions) {
-            symmetryOptions.style.display = SymmetryMode.isEnabled() ? 'flex' : 'none';
-        }
-    }
-    
     return {
         init,
         setActiveTool,
@@ -373,8 +352,7 @@ const Tools = (function() {
         getDrawColor: () => drawColor,
         getBrushSize,
         getBrushOpacity,
-        getCurrentTool: () => currentTool,
-        updateSymmetryUI
+        getCurrentTool: () => currentTool
     };
 })();
 

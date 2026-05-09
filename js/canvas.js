@@ -7,8 +7,6 @@ const Canvas = (function() {
     let canvas = null;
     /** @type {boolean} Cờ đánh dấu đã khởi tạo hay chưa */
     let isInitialized = false;
-    /** @type {string} Chế độ vẽ hiện tại (ví dụ: 'free', 'shape') */
-    let mode = 'free';
     /** @type {string} Màu nền hiện tại của canvas */
     let backgroundColor = '#ffffff';
     /** @type {boolean} Cờ đánh dấu đang trong trạng thái di chuyển canvas (pan) */
@@ -295,29 +293,6 @@ const Canvas = (function() {
     }
     
     /**
-     * Thiết lập chế độ vẽ cho canvas.
-     * @param {string} newMode - Chế độ mới ('free' để vẽ tự do, các chế độ khác cho hình khối).
-     */
-    function setMode(newMode) {
-        mode = newMode;
-        if (canvas) {
-            if (mode === 'free') {
-                canvas.isDrawingMode = true;
-            } else {
-                canvas.isDrawingMode = false;
-            }
-        }
-    }
-    
-    /**
-     * Lấy chế độ vẽ hiện tại.
-     * @returns {string} Chế độ vẽ.
-     */
-    function getMode() {
-        return mode;
-    }
-    
-    /**
      * Thiết lập màu nền cho canvas.
      * @param {string} color - Mã màu (hex, rgb, v.v.).
      */
@@ -456,28 +431,6 @@ const Canvas = (function() {
     }
     
     /**
-     * Thêm một đối tượng vào canvas.
-     * @param {fabric.Object} obj - Đối tượng cần thêm.
-     */
-    function addObject(obj) {
-        if (canvas) {
-            canvas.add(obj);
-            canvas.renderAll();
-        }
-    }
-    
-    /**
-     * Thêm nhiều đối tượng vào canvas.
-     * @param {Array<fabric.Object>} objects - Danh sách các đối tượng.
-     */
-    function addObjects(objects) {
-        if (canvas) {
-            objects.forEach(obj => canvas.add(obj));
-            canvas.renderAll();
-        }
-    }
-    
-    /**
      * Lấy tọa độ trung tâm thực tế của khung nhìn canvas (sau khi zoom/pan).
      * @returns {Object} Tọa độ {x, y}.
      */
@@ -531,11 +484,13 @@ const Canvas = (function() {
         }
     }
     
+    function renderAll() {
+        if (canvas) canvas.renderAll();
+    }
+
     return {
         init,
         handleResize,
-        setMode,
-        getMode,
         setBackgroundColor,
         zoomIn,
         zoomOut,
@@ -550,15 +505,14 @@ const Canvas = (function() {
         loadFromJSON,
         toPNG,
         deleteSelected,
-        addObject,
-        addObjects,
         getCenter,
         updateZoomDisplay,
         setGridSize,
         getGridSize,
         setSnapEnabled,
         getSnapEnabled,
-        snapToGrid
+        snapToGrid,
+        renderAll
     };
 })();
 
