@@ -436,9 +436,9 @@ const Shapes = (function () {
                 opacity: baseShape.opacity
             });
 
-            // 6. Đặt lại vị trí tâm và sao chép các thông số hình học (chiều dài, rộng, bán kính...)
-            linkedShape.setPositionByOrigin(new fabric.Point(newCenter.x, newCenter.y), 'center', 'center');
+            // 6. Sao chép kích thước trước, sau đó đặt vị trí tâm
             copyShapeGeometry(linkedShape, baseShape);
+            linkedShape.setPositionByOrigin(new fabric.Point(newCenter.x, newCenter.y), 'center', 'center');
             linkedShape.setCoords();
         });
 
@@ -461,6 +461,16 @@ const Shapes = (function () {
             target.set({ rx: source.rx, ry: source.ry });
         } else if (type === 'polygon') {
             target.set({ points: source.points.slice() });
+            if (typeof target._calcDimensions === 'function') {
+                var dim = target._calcDimensions();
+                var correctSize = target.exactBoundingBox ? (target.strokeWidth || 0) : 0;
+                target.width = dim.width - correctSize;
+                target.height = dim.height - correctSize;
+                target.pathOffset = {
+                    x: dim.left + target.width / 2 + correctSize / 2,
+                    y: dim.top + target.height / 2 + correctSize / 2
+                };
+            }
         } else if (type === 'path') {
             if (JSON.stringify(target.path) !== JSON.stringify(source.path)) {
                 target.set({ path: source.path });
@@ -576,7 +586,8 @@ const Shapes = (function () {
             stroke: color,
             strokeWidth: 2,
             fill: 'transparent',
-            selectable: false
+            selectable: false,
+            objectCaching: false
         };
 
         const createFunc = ShapeFactory[type] || ShapeFactory['rectangle'];
@@ -645,7 +656,13 @@ const Shapes = (function () {
                     top: Math.min(start.y, end.y),
                     points: points
                 });
-                shape._calcDimensions();
+                if (typeof shape._calcDimensions === 'function') {
+                    var d = shape._calcDimensions();
+                    var cs = shape.exactBoundingBox ? (shape.strokeWidth || 0) : 0;
+                    shape.width = d.width - cs;
+                    shape.height = d.height - cs;
+                    shape.pathOffset = { x: d.left + shape.width / 2 + cs / 2, y: d.top + shape.height / 2 + cs / 2 };
+                }
                 break;
         }
 
