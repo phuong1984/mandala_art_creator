@@ -292,3 +292,36 @@
 .properties-panel .checkbox-label input {
     cursor: pointer;
 }
+
+.properties-panel .no-color-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+
+.properties-panel .no-color-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.properties-panel .no-color-btn.active {
+    background: var(--danger);
+    color: var(--white);
+    border-color: var(--danger);
+}
+
+.properties-panel .no-color-btn.active:hover {
+    opacity: 0.85;
+}

@@ -8,8 +8,10 @@ const Properties = (function() {
     let panelTitle = null;
     let strokeColorInput = null;
     let strokeRow = null;
+    let strokeNoneBtn = null;
     let fillColorInput = null;
     let fillRow = null;
+    let fillNoneBtn = null;
     let strokeWidthInput = null;
     let strokeWidthLabel = null;
     let strokeWidthValue = null;
@@ -34,8 +36,10 @@ const Properties = (function() {
         panelTitle = document.getElementById('prop-panel-title');
         strokeColorInput = document.getElementById('prop-stroke-color');
         strokeRow = document.getElementById('prop-stroke-row');
+        strokeNoneBtn = document.getElementById('prop-stroke-none');
         fillColorInput = document.getElementById('prop-fill-color');
         fillRow = document.getElementById('prop-fill-row');
+        fillNoneBtn = document.getElementById('prop-fill-none');
         strokeWidthInput = document.getElementById('prop-stroke-width');
         strokeWidthLabel = document.getElementById('prop-width-label');
         strokeWidthValue = strokeWidthInput.parentElement.querySelector('.value');
@@ -61,12 +65,26 @@ const Properties = (function() {
         // Lắng nghe sự kiện thay đổi trên UI
         strokeColorInput.addEventListener('input', (e) => {
             if (isUpdatingUI) return;
+            strokeNoneBtn.classList.remove('active');
             handlePropertyChange('stroke', e.target.value);
         });
 
         fillColorInput.addEventListener('input', (e) => {
             if (isUpdatingUI) return;
+            fillNoneBtn.classList.remove('active');
             handlePropertyChange('fill', e.target.value);
+        });
+
+        strokeNoneBtn.addEventListener('click', () => {
+            if (isUpdatingUI) return;
+            const isActive = strokeNoneBtn.classList.toggle('active');
+            handlePropertyChange('stroke', isActive ? 'transparent' : strokeColorInput.value);
+        });
+
+        fillNoneBtn.addEventListener('click', () => {
+            if (isUpdatingUI) return;
+            const isActive = fillNoneBtn.classList.toggle('active');
+            handlePropertyChange('fill', isActive ? 'transparent' : fillColorInput.value);
         });
 
         strokeWidthInput.addEventListener('input', (e) => {
@@ -117,11 +135,15 @@ const Properties = (function() {
             I18n.updateElement(strokeWidthLabel);
 
             // Cập nhật giá trị
-            if (activeObj.stroke) strokeColorInput.value = formatColorToHex(activeObj.stroke);
+            var isStrokeTransparent = !activeObj.stroke || activeObj.stroke === 'transparent';
+            strokeColorInput.value = isStrokeTransparent ? '#000000' : formatColorToHex(activeObj.stroke);
+            strokeNoneBtn.classList.toggle('active', isStrokeTransparent);
             
             if (isFillable(activeObj)) {
                 fillRow.style.display = 'flex';
-                fillColorInput.value = (activeObj.fill && activeObj.fill !== 'transparent') ? formatColorToHex(activeObj.fill) : '#ffffff';
+                var isFillTransparent = !activeObj.fill || activeObj.fill === 'transparent';
+                fillColorInput.value = isFillTransparent ? '#ffffff' : formatColorToHex(activeObj.fill);
+                fillNoneBtn.classList.toggle('active', isFillTransparent);
             } else {
                 fillRow.style.display = 'none';
             }
@@ -157,7 +179,9 @@ const Properties = (function() {
             } else {
                 fillRow.style.display = 'flex';
                 strokeColorInput.value = Tools.getDrawColor();
-                // Shape default properties from somewhere? Let's use Tools or default
+                strokeNoneBtn.classList.remove('active');
+                fillColorInput.value = '#ffffff';
+                fillNoneBtn.classList.add('active');
                 strokeWidthInput.value = 2;
                 strokeWidthValue.textContent = 2;
                 opacityInput.value = 100;
@@ -200,7 +224,13 @@ const Properties = (function() {
         } else if (property === 'opacity') {
             if (currentTool === 'brush') Tools.setBrushOpacity(value * 100);
         } else if (property === 'fill') {
-            // Update default shape fill color
+            if (currentTool === 'brush') {
+                // brush doesn't use fill
+            } else {
+                Tools.setDrawColor(value);
+                const fgInput = document.getElementById('draw-color');
+                if (fgInput && value !== 'transparent') fgInput.value = value;
+            }
         }
     }
 
@@ -246,9 +276,18 @@ const Properties = (function() {
      */
     function formatColorToHex(color) {
         if (typeof color !== 'string') return '#000000';
+        if (color === 'transparent') return '#000000';
         if (color.startsWith('#')) return color;
-        // Logic parse rgb/rgba có thể thêm ở đây nếu cần
-        return color;
+        if (color.startsWith('rgb')) {
+            var parts = color.match(/\d+/g);
+            if (parts) {
+                var r = parseInt(parts[0]).toString(16).padStart(2, '0');
+                var g = parseInt(parts[1]).toString(16).padStart(2, '0');
+                var b = parseInt(parts[2]).toString(16).padStart(2, '0');
+                return '#' + r + g + b;
+            }
+        }
+        return '#000000';
     }
 
     return {
